@@ -13,6 +13,6 @@ class MainActivity : AppCompatActivity() {
         val text2 = "Нижняя строчка, настроенная из кода"
         binding.customViewInActivity.set1Text(text1)
         binding.customViewInActivity.set2Text(text2)
-
+//test for IDE via ssh
     }
 }
