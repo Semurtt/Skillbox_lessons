@@ -51,7 +51,7 @@
             android:layout_margin="16dp"
             android:ellipsize="end"
             android:lines="1"
-            tools:text="@tools:sample/lorem/random" >
+            tools:text="@tools:sample/lorem/random">
 
         </TextView>
 
