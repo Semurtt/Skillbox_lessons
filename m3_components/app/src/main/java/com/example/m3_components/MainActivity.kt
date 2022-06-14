@@ -17,41 +17,40 @@ class MainActivity : AppCompatActivity() {
         var currentProgress = 100.0
 
 
-
+        binding.slider.addOnChangeListener { _, value, _ ->
+            time = value + 1
+            lastTime = value
+            step = 100 / value
+            currentProgress = 100.0 + step
+        }
 
         CoroutineScope(Dispatchers.Main).launch {
 
-            binding.slider.addOnChangeListener { _, value, _ ->
-                time = value
-                lastTime = value
-                step = 100 / value
-                currentProgress = 100.0 + step
-            }
-
-                binding.button.setOnClickListener {
-                    binding.slider.isEnabled = false
-                    binding.button.text = "Запустили"
-                    binding.timer.text = time.toInt().toString()
-                    launch(Dispatchers.Main) {
+            fun loop(){
+                launch(Dispatchers.Main) {
                     while (time > 0) {
-//                for (i in time.toInt()..0) {
-//                        repeat(time.toInt()) {
                         delay(500)
                         time--
                         binding.timer.text = time.toInt().toString()
                         currentProgress -= step
                         binding.progressBar.progress = currentProgress.toInt()
                         binding.button.text = "Цикл работает"
-                        }
                     }
-                    time--
-                    binding.button.text = "temp"
-//                    delay(2000)
-                    binding.timer.text = time.toInt().toString()
-                    currentProgress -= step
-                    binding.progressBar.progress = currentProgress.toInt()
-                    binding.button.text = "Закончили"
                 }
+            }
+
+
+
+                binding.button.setOnClickListener {
+                    binding.slider.isEnabled = false
+                    binding.button.text = "Запустили"
+                    binding.timer.text = time.toInt().toString()
+                    loop() //не работает
+                }
+
+            loop() //работает
+
+
 
 
             /*launch {
