@@ -3,10 +3,7 @@ package com.example.m3_components
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.m3_components.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,18 +19,42 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        runBlocking(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
 
-            launch(Dispatchers.Main) {
-                binding.slider.addOnChangeListener { _, value, _ ->
-                    time = value + 1
-                    lastTime = value
-                    step = 100 / value
-                    currentProgress = 100.0 + step
-                }
+            binding.slider.addOnChangeListener { _, value, _ ->
+                time = value
+                lastTime = value
+                step = 100 / value
+                currentProgress = 100.0 + step
             }
 
-            launch(Dispatchers.Main) {
+                binding.button.setOnClickListener {
+                    binding.slider.isEnabled = false
+                    binding.button.text = "Запустили"
+                    binding.timer.text = time.toInt().toString()
+                    launch(Dispatchers.Main) {
+                    while (time > 0) {
+//                for (i in time.toInt()..0) {
+//                        repeat(time.toInt()) {
+                        delay(500)
+                        time--
+                        binding.timer.text = time.toInt().toString()
+                        currentProgress -= step
+                        binding.progressBar.progress = currentProgress.toInt()
+                        binding.button.text = "Цикл работает"
+                        }
+                    }
+                    time--
+                    binding.button.text = "temp"
+//                    delay(2000)
+                    binding.timer.text = time.toInt().toString()
+                    currentProgress -= step
+                    binding.progressBar.progress = currentProgress.toInt()
+                    binding.button.text = "Закончили"
+                }
+
+
+            /*launch {
                 while (true) {
                     delay(1000)
                     binding.button.setOnClickListener {
@@ -55,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }
+            }*/
         }
 
     }
