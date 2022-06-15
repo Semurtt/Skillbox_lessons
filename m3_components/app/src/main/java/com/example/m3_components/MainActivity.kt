@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         val job = CoroutineScope(Dispatchers.Main)
 
-        var job1: Job? = null
+        var countDown: Job? = null
 
         binding.button.setOnClickListener {
             if (!isRunning) {
@@ -47,9 +47,9 @@ class MainActivity : AppCompatActivity() {
                 binding.slider.isEnabled = false
                 binding.button.text = "СТОП"
                 binding.timer.text = time.toInt().toString()
-                job1 = job.launch {
+                countDown = job.launch {
                     while (time > 0) {
-                        delay(500)
+                        delay(1000)
                         time--
                         binding.timer.text = time.toInt().toString()
                         currentProgress -= step
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(baseContext, "Остановили", Toast.LENGTH_SHORT).show()
-                job1?.cancel()
+                countDown?.cancel()
                 stop()
             }
         }
