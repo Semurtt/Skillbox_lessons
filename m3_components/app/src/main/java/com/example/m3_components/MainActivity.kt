@@ -2,6 +2,7 @@ package com.example.m3_components
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.m3_components.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 
@@ -15,68 +16,55 @@ class MainActivity : AppCompatActivity() {
         var step: Float = 100 / time
         var lastTime: Float = time
         var currentProgress = 100.0
-
+        var isRunning = false
 
         binding.slider.addOnChangeListener { _, value, _ ->
-            time = value + 1
+            time = value
             lastTime = value
             step = 100 / value
-            currentProgress = 100.0 + step
+            binding.timer.text = time.toInt().toString()
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
+        fun stop() {
+            isRunning = false
+            time = lastTime
+            binding.slider.isEnabled = true
+            binding.slider.value = time
+            currentProgress = 100.0
+            binding.progressBar.progress = currentProgress.toInt()
+            binding.timer.text = time.toInt().toString()
+            binding.button.text = "СТАРТ"
+        }
 
-            fun loop(){
-                launch(Dispatchers.Main) {
+        val job = CoroutineScope(Dispatchers.Main)
+
+        var job1: Job? = null
+
+        binding.button.setOnClickListener {
+            if (!isRunning) {
+                Toast.makeText(baseContext, "Запускаем", Toast.LENGTH_SHORT).show()
+                isRunning = true
+                binding.slider.isEnabled = false
+                binding.button.text = "СТОП"
+                binding.timer.text = time.toInt().toString()
+                job1 = job.launch {
                     while (time > 0) {
                         delay(500)
                         time--
                         binding.timer.text = time.toInt().toString()
                         currentProgress -= step
                         binding.progressBar.progress = currentProgress.toInt()
-                        binding.button.text = "Цикл работает"
                     }
+                    stop()
+                    Toast.makeText(baseContext, "Закончили", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Toast.makeText(baseContext, "Остановили", Toast.LENGTH_SHORT).show()
+                job1?.cancel()
+                stop()
             }
-
-
-
-                binding.button.setOnClickListener {
-                    binding.slider.isEnabled = false
-                    binding.button.text = "Запустили"
-                    binding.timer.text = time.toInt().toString()
-                    loop() //не работает
-                }
-
-            loop() //работает
-
-
-
-
-            /*launch {
-                while (true) {
-                    delay(1000)
-                    binding.button.setOnClickListener {
-                        if (time > 1) {
-                            binding.slider.isEnabled = false
-                            binding.button.text = "Идёт"
-                            time--
-                            binding.timer.text = time.toInt().toString()
-                            currentProgress -= step
-                            binding.progressBar.progress = currentProgress.toInt()
-                        } else {
-                            time--
-                            binding.timer.text = time.toInt().toString()
-                            binding.progressBar.progress = time.toInt()
-                            binding.button.text = "Сброс"
-                            currentProgress = 100.0 + step
-                            time = lastTime + 1
-                            binding.slider.isEnabled = true
-                        }
-                    }
-                }
-            }*/
         }
+
 
     }
 }
