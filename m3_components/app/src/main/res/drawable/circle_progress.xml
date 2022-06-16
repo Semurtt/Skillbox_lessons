@@ -12,7 +12,7 @@
         <shape
             android:shape="ring"
             android:thicknessRatio="16">
-            <solid android:color="?attr/colorPrimary" />
+            <solid android:color="?attr/colorPrimaryVariant" />
         </shape>
     </item>
 </layer-list>
